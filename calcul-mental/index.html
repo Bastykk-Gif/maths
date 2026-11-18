@@ -79,6 +79,7 @@ ul.rows{list-style:none; margin:0; padding:0; display:grid; gap:10px}
 .row.ok .mark{background:var(--rose); color:#fff}
 .rq{font-weight:700}
 .rd{color:var(--muted); font-size:.93rem; margin-top:2px}
+.rx{color:var(--lav); font-style:italic; font-size:.93rem; margin-top:4px; padding-left:10px; border-left:3px solid var(--lav-soft)}
 .cf{position:fixed; top:-16px; width:9px; height:14px; border-radius:2px; pointer-events:none; z-index:50; animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(108vh) rotate(560deg)}}
 @media (max-width:480px){.wrap{padding:12px 12px 48px}.card{padding:16px}}
@@ -352,7 +353,8 @@ function endG1(){
     const ok=check(q,G1.ans[i]); if(ok) score++;
     return `<li class="row ${ok?"ok":""}"><span class="mark">${ok?"✓":"•"}</span><div>
       <div class="rq">${q.full}</div>
-      <div class="rd">Ta réponse : ${userText(q,G1.ans[i])} · ${q.expl}</div></div></li>`;
+      <div class="rd">Ta réponse : ${userText(q,G1.ans[i])}</div>
+      <div class="rx">${q.expl}</div></div></li>`;
   }).join("");
   const t=$("#resTitle"), s=$("#resSub");
   t.className="res-title";
