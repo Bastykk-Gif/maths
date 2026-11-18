@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calcul mental</title>
+<style>
+:root{
+  --bg:#fbf6f4; --card:#fff; --ink:#3a2f45; --muted:#756a82;
+  --rose:#b8406b; --rose-soft:#f8e1e9; --lav:#6f5ead; --lav-soft:#eee9f8; --line:#eadfe6;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; min-height:100vh; color:var(--ink);
+  font-family:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:
+    radial-gradient(1100px 560px at 8% -12%,#f6e3ec 0,transparent 60%),
+    radial-gradient(900px 500px at 100% 0,#e9e3f6 0,transparent 55%),
+    var(--bg);
+}
+.wrap{max-width:720px; margin:0 auto; padding:16px 16px 56px}
+.top{display:flex; align-items:center; gap:12px; min-height:48px; margin-bottom:8px}
+.top .ttl{font-weight:700; color:var(--muted)}
+h1{font-size:clamp(2rem,7vw,3rem); margin:.6em 0 .1em; letter-spacing:-.02em}
+.sub{color:var(--muted); margin:0 0 1.4em}
+.card{background:var(--card); border:1px solid var(--line); border-radius:22px; padding:20px; box-shadow:0 8px 28px rgba(111,94,173,.08)}
+.modes{display:grid; gap:14px}
+.mode{
+  text-align:left; width:100%; font:inherit; color:inherit; cursor:pointer;
+  background:var(--card); border:1px solid var(--line); border-radius:22px; padding:18px 20px;
+  box-shadow:0 8px 28px rgba(111,94,173,.08); display:flex; gap:16px; align-items:center;
+}
+.mode:hover,.mode:focus-visible{border-color:var(--rose); outline:none}
+.mode .num{
+  flex:none; width:46px; height:46px; border-radius:50%; display:grid; place-items:center;
+  font-weight:800; font-size:1.2rem; background:var(--rose-soft); color:var(--rose);
+}
+.mode:nth-child(2) .num{background:var(--lav-soft); color:var(--lav)}
+.mode b{display:block; font-size:1.15rem}
+.mode span.d{color:var(--muted); font-size:.95rem}
+.btn{
+  font:inherit; font-weight:700; border:0; border-radius:14px; cursor:pointer; min-height:52px; padding:0 24px;
+  background:var(--rose); color:#fff;
+}
+.btn:hover{filter:brightness(1.06)}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--lav); outline-offset:2px}
+.btn.alt{background:var(--lav-soft); color:var(--lav)}
+.btn.ghost{background:transparent; color:var(--muted); border:1px solid var(--line); min-height:44px; padding:0 16px}
+.btn.big{font-size:1.25rem; min-width:120px}
+.meta{display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-weight:700; margin-bottom:10px}
+.bar{height:10px; background:var(--lav-soft); border-radius:99px; overflow:hidden; margin-bottom:18px}
+.bar i{display:block; height:100%; width:100%; background:var(--lav); border-radius:99px; transition:width .1s linear, background .3s}
+.bar i.low{background:var(--rose)}
+.q{font-size:clamp(1.9rem,8vw,3.2rem); font-weight:800; text-align:center; margin:18px 0 22px; line-height:1.25; letter-spacing:-.01em}
+.ans{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; margin-bottom:18px}
+.fld{display:flex; align-items:center; gap:8px; font-weight:700; color:var(--muted)}
+.fld input{
+  width:min(44vw,170px); font:inherit; font-size:1.6rem; font-weight:700; text-align:center; color:var(--ink);
+  padding:10px; border:2px solid var(--line); border-radius:14px; background:#fff;
+}
+.fld input:disabled{background:#f6f1f4}
+.actions{display:flex; justify-content:center; gap:12px; flex-wrap:wrap}
+.chip{display:inline-block; padding:6px 12px; border-radius:99px; background:var(--lav-soft); color:var(--lav); font-weight:700; font-size:.9rem}
+.chip.hot{background:var(--rose-soft); color:var(--rose)}
+.fb{margin-top:18px; border-radius:18px; padding:16px 18px}
+.fb.good{background:var(--rose-soft)}
+.fb.neutral{background:var(--lav-soft)}
+.fb .big{font-size:1.3rem; font-weight:800}
+.fb .detail{margin-top:8px; line-height:1.55}
+.res-title{font-size:clamp(1.7rem,6vw,2.4rem); font-weight:800; text-align:center; margin:6px 0}
+.res-sub{text-align:center; color:var(--muted); margin:0 0 18px}
+.res-title.star{color:var(--rose)}
+ul.rows{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+.row{display:flex; gap:12px; align-items:flex-start; padding:12px 14px; border-radius:16px; background:#faf6f8}
+.row.ok{background:var(--rose-soft)}
+.mark{flex:none; width:26px; height:26px; border-radius:50%; display:grid; place-items:center; background:#fff; color:var(--muted); font-weight:800}
+.row.ok .mark{background:var(--rose); color:#fff}
+.rq{font-weight:700}
+.rd{color:var(--muted); font-size:.93rem; margin-top:2px}
+.cf{position:fixed; top:-16px; width:9px; height:14px; border-radius:2px; pointer-events:none; z-index:50; animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(560deg)}}
+@media (max-width:480px){.wrap{padding:12px 12px 48px}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <button class="btn ghost" id="btnMenu" hidden>← Menu principal</button>
+    <span class="ttl" id="topTitle"></span>
+  </div>
+
+  <!-- MENU -->
+  <section id="menu">
+    <h1>Calcul mental</h1>
+    <p class="sub">Choisis ton jeu.</p>
+    <div class="modes">
+      <button class="mode" data-start="1"><div class="num">1</div><div><b>Évaluation</b><span class="d">12 questions, 13 secondes chacune. Résultat à la fin.</span></div></button>
+      <button class="mode" data-start="2"><div class="num">2</div><div><b>Heures et minutes</b><span class="d">Convertir sans minuteur, avec correction détaillée.</span></div></button>
+      <button class="mode" data-start="3"><div class="num">3</div><div><b>Divisions par 4</b><span class="d">Les résultats en ,5 (comme 38 ÷ 4), avec correction détaillée.</span></div></button>
+    </div>
+  </section>
+
+  <!-- JEU 1 -->
+  <section id="g1" hidden>
+    <div class="card">
+      <div class="meta"><span id="g1n"></span><span id="g1t"></span></div>
+      <div class="bar"><i id="g1bar"></i></div>
+      <div class="q" id="g1q"></div>
+      <div class="ans" id="g1a"></div>
+      <div class="actions"><button class="btn big" id="g1ok">Valider</button></div>
+    </div>
+  </section>
+
+  <!-- RÉSULTATS JEU 1 -->
+  <section id="g1res" hidden>
+    <div class="card">
+      <div class="res-title" id="resTitle"></div>
+      <p class="res-sub" id="resSub"></p>
+      <ul class="rows" id="resRows"></ul>
+      <div class="actions" style="margin-top:20px">
+        <button class="btn" id="replay1">Rejouer</button>
+        <button class="btn alt" id="toMenu1">Menu principal</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- JEUX 2 et 3 -->
+  <section id="tr" hidden>
+    <div class="card">
+      <div class="meta"><span id="trStreak" class="chip" hidden></span><span id="trBest"></span></div>
+      <div class="q" id="trq"></div>
+      <div class="ans" id="tra"></div>
+      <div class="actions">
+        <button class="btn big" id="trok">Valider</button>
+        <button class="btn big" id="trnext" hidden>Suivante</button>
+      </div>
+      <div id="trfb" aria-live="polite"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $ = s => document.querySelector(s);
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pick = a => a[rnd(0,a.length-1)];
+const T = t => { const a=Math.abs(t), s=Math.floor(a/10), d=a%10; return (t<0?"−":"")+(d? s+","+d : ""+s); };
+const pl = h => h>1 ? "s" : "";
+
+/* ---------- Génération des questions ---------- */
+function mk(text,type,ans,ansText,expl,extra){
+  const full = /___/.test(text) ? text.replace(/___( h ___)? min/, ansText) : text+" "+ansText;
+  return Object.assign({text,type,ans,ansText,expl,full},extra||{});
+}
+const num = (text,ans,expl,ansText,unit) => mk(text,"num",ans,ansText||String(ans).replace(".",","),expl,{unit:unit||""});
+const yn  = (text,ans,expl) => mk(text,"yn",ans,ans?"oui":"non",expl);
+
+const gen = {
+  mul(){ const a=rnd(6,9), b=rnd(6,9); return num(`${a} × ${b} =`, a*b, `${a} × ${b} = ${a*b}`); },
+  div(){ const d=pick([4,6]), q=pick([30,40,50,60,70,80,90]), n=d*q; return num(`${n} ÷ ${d} =`, q, `${d} × ${q} = ${n}`); },
+  double(){ const n=rnd(11,49); return num(`le double de ${n} =`, 2*n, `2 × ${n} = ${2*n}`); },
+  div2(){ const n=rnd(51,499)*2+rnd(0,1), e=n%2===0; return yn(`${n} est-il divisible par 2 ?`, e, `Finit par ${n%10} : ${e?"oui":"non"}`); },
+  time1(){
+    const h=rnd(1,3), k=pick(["quart","demie","min"]);
+    let m, t;
+    if(k==="quart"){ m=15; t=`${h} heure${pl(h)} et quart = ___ min`; }
+    else if(k==="demie"){ m=30; t=`${h} heure${pl(h)} et demie = ___ min`; }
+    else { m=pick([5,10,20,25,35,40,45]); t=`${h} heure${pl(h)} et ${m} min = ___ min`; }
+    const r=h*60+m;
+    return num(t, r, `${h} × 60 + ${m} = ${r}`, `${r} min`, "min");
+  },
+  add(){
+    let a,b; do{ a=rnd(21,69); b=rnd(21,69); }while(a%10===0||b%10===0);
+    return num(`${T(a)} + ${T(b)} =`, (a+b)/10, `${T(a)} + ${T(b)} = ${T(a+b)}`, T(a+b));
+  },
+  div10(){ const n=rnd(101,999)*10+(rnd(0,1)?0:rnd(1,9)), e=n%10===0; return yn(`${n} est-il divisible par 10 ?`, e, `Finit par ${n%10} : ${e?"oui":"non"}`); },
+  triple(){ const n=rnd(11,29); return num(`le triple de ${n} =`, 3*n, `3 × ${n} = ${3*n}`); },
+  sub(){
+    let a; do{ a=rnd(101,199); }while(a%10===0);
+    const k=rnd(2,6);
+    return num(`${T(a)} − ${k} =`, (a-10*k)/10, `${T(a)} − ${k} = ${T(a-10*k)}`, T(a-10*k));
+  },
+  time2(){
+    let t; do{ t=rnd(130,299); }while(t%60===0);
+    const h=Math.floor(t/60), m=t%60;
+    return mk(`${t} min = ___ h ___ min`,"hm",{h,m},`${h} h ${m} min`,`${t} = ${h} × 60 + ${m}`);
+  },
+  half(){
+    const k=rnd(2,9), n=4*k+2;
+    return num(`${n} ÷ 4 =`, k+0.5, `${n} = 4 × ${k} + 2, donc ${k},5`, `${k},5`);
+  }
+};
+
+/* Questions détaillées (jeux 2 et 3) */
+function minToHm(){
+  let t; do{ t=rnd(61,359); }while(t%60===0);
+  const h=Math.floor(t/60), m=t%60;
+  const q=mk(`${t} min = ___ h ___ min`,"hm",{h,m},`${h} h ${m} min`,"");
+  q.detail=[
+    `Une heure = 60 min.`,
+    `${h} × 60 = ${h*60}, et ${t} − ${h*60} = ${m}.`,
+    `Donc ${t} min = ${h} h ${m} min.`
+  ];
+  return q;
+}
+function hmToMin(){
+  const h=rnd(1,5), m=pick([5,10,15,20,25,30,35,40,45,50,55]), r=h*60+m;
+  const q=num(`${h} h ${m<10?"0"+m:m} = ___ min`, r, "", `${r} min`, "min");
+  q.detail=[
+    `${h} h = ${h} × 60 = ${h*60} min.`,
+    `On ajoute les ${m} min : ${h*60} + ${m} = ${r}.`,
+    `Donc ${h} h ${m} = ${r} min.`
+  ];
+  return q;
+}
+function halfDetailed(){
+  const k=rnd(2,9), n=4*k+2;
+  const q=num(`${n} ÷ 4 =`, k+0.5, "", `${k},5`);
+  q.detail=[
+    `4 × ${k} = ${4*k}, il reste ${n} − ${4*k} = 2.`,
+    `2 ÷ 4 = 0,5 (2 sur 4, c'est la moitié).`,
+    `Donc ${n} ÷ 4 = ${k},5.`,
+    `Astuce : la moitié de ${n} est ${n/2}, et la moitié de ${n/2} est ${k},5.`
+  ];
+  return q;
+}
+
+/* ---------- Saisie et vérification ---------- */
+function parseNum(s){ s=String(s).trim().replace(/\s/g,"").replace(",","."); if(s===""||isNaN(s)) return null; return parseFloat(s); }
+function isEmpty(v){ return v==null || (typeof v==="object" && v.h==null && v.m==null); }
+function check(q,v){
+  if(isEmpty(v)) return false;
+  if(q.type==="num") return Math.abs(v-q.ans)<1e-6;
+  if(q.type==="yn")  return v===q.ans;
+  if(q.type==="hm")  return v.h===q.ans.h && v.m===q.ans.m;
+  return false;
+}
+function userText(q,v){
+  if(isEmpty(v)) return "—";
+  if(q.type==="num") return String(v).replace(".",",")+(q.unit?" "+q.unit:"");
+  if(q.type==="yn")  return v?"oui":"non";
+  return (v.h==null?"?":v.h)+" h "+(v.m==null?"?":v.m)+" min";
+}
+function buildAnswer(box,q,onSubmit){
+  box.innerHTML="";
+  let read=()=>null, focus=()=>{};
+  const field=(unit,label,mode)=>{
+    const w=document.createElement("label"); w.className="fld";
+    const i=document.createElement("input");
+    i.type="text"; i.inputMode=mode||"decimal"; i.autocomplete="off"; i.setAttribute("aria-label",label); i.enterKeyHint="done";
+    i.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); onSubmit(); } });
+    const u=document.createElement("span"); u.textContent=unit||"";
+    w.append(i,u); box.appendChild(w); return i;
+  };
+  if(q.type==="yn"){
+    let val=null;
+    [["Oui",true],["Non",false]].forEach(([l,b])=>{
+      const bt=document.createElement("button"); bt.type="button"; bt.className="btn alt big"; bt.textContent=l;
+      bt.onclick=()=>{ val=b; onSubmit(); };
+      box.appendChild(bt);
+    });
+    read=()=>val;
+  } else if(q.type==="hm"){
+    const h=field("h","Heures","numeric"), m=field("min","Minutes","numeric");
+    read=()=>({h:parseNum(h.value), m:parseNum(m.value)});
+    focus=()=>h.focus();
+  } else {
+    const i=field(q.unit,"Réponse");
+    read=()=>parseNum(i.value);
+    focus=()=>i.focus();
+  }
+  return {read,focus};
+}
+function confetti(n){
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const cols=["#b8406b","#6f5ead","#f1b6c8","#cfc4ee","#f4d58d"];
+  for(let i=0;i<(n||36);i++){
+    const s=document.createElement("span"); s.className="cf";
+    s.style.left=rnd(0,100)+"vw"; s.style.background=pick(cols);
+    s.style.animationDuration=(1.8+Math.random()*1.6)+"s"; s.style.animationDelay=(Math.random()*.4)+"s";
+    document.body.appendChild(s); setTimeout(()=>s.remove(),4200);
+  }
+}
+
+/* ---------- Navigation ---------- */
+const views=["menu","g1","g1res","tr"];
+let timer=null;
+function show(id,title){
+  clearInterval(timer);
+  views.forEach(v=>{ $("#"+v).hidden = v!==id; });
+  $("#btnMenu").hidden = id==="menu" || id==="g1res";
+  $("#topTitle").textContent = title||"";
+  window.scrollTo(0,0);
+}
+function toMenu(){ show("menu"); }
+$("#btnMenu").onclick=toMenu;
+$("#toMenu1").onclick=toMenu;
+$("#replay1").onclick=()=>startG1();
+document.querySelectorAll("[data-start]").forEach(b=>{
+  b.onclick=()=>{ const m=b.dataset.start; if(m==="1") startG1(); else startTr(+m); };
+});
+
+/* ---------- Jeu 1 ---------- */
+const G1={qs:[],i:0,ans:[],reader:null,deadline:0,DUR:13000};
+function buildSet(){
+  const order=["mul","div","double","div2","time1","add","div10","triple","sub","time2","mul","half"];
+  const out=[]; let lastMul="";
+  for(const k of order){
+    let q; do{ q=gen[k](); }while(k==="mul" && q.text===lastMul);
+    if(k==="mul") lastMul=q.text;
+    out.push(q);
+  }
+  return out;
+}
+function startG1(){
+  G1.qs=buildSet(); G1.i=0; G1.ans=[];
+  show("g1","Évaluation");
+  nextQ1();
+}
+function nextQ1(){
+  if(G1.i>=G1.qs.length) return endG1();
+  const q=G1.qs[G1.i];
+  $("#g1n").textContent=`Question ${G1.i+1} / ${G1.qs.length}`;
+  $("#g1q").textContent=q.text;
+  $("#g1ok").hidden = q.type==="yn";
+  const a=buildAnswer($("#g1a"),q,()=>validate1(false));
+  G1.reader=a.read;
+  G1.deadline=Date.now()+G1.DUR;
+  clearInterval(timer); timer=setInterval(tick1,100); tick1();
+  a.focus();
+}
+function tick1(){
+  const left=Math.max(0,G1.deadline-Date.now());
+  $("#g1bar").style.width=(left/G1.DUR*100)+"%";
+  $("#g1bar").classList.toggle("low",left<4000);
+  $("#g1t").textContent=Math.ceil(left/1000)+" s";
+  if(left<=0) validate1(true);
+}
+function validate1(timeout){
+  const v=G1.reader();
+  if(!timeout && isEmpty(v)){ const i=$("#g1a input"); if(i) i.focus(); return; }
+  G1.ans.push(v); G1.i++; nextQ1();
+}
+$("#g1ok").onclick=()=>validate1(false);
+function endG1(){
+  clearInterval(timer);
+  let score=0;
+  const rows=G1.qs.map((q,i)=>{
+    const ok=check(q,G1.ans[i]); if(ok) score++;
+    return `<li class="row ${ok?"ok":""}"><span class="mark">${ok?"✓":"•"}</span><div>
+      <div class="rq">${q.full}</div>
+      <div class="rd">Ta réponse : ${userText(q,G1.ans[i])} · ${q.expl}</div></div></li>`;
+  }).join("");
+  const t=$("#resTitle"), s=$("#resSub");
+  t.className="res-title";
+  if(score===12){ t.textContent="Sans faute : 12 / 12 !"; s.textContent="Magnifique, rien à redire."; t.classList.add("star"); confetti(70); }
+  else if(score===11){ t.textContent="Superbe : 11 / 12 !"; s.textContent="Un résultat remarquable."; t.classList.add("star"); confetti(55); }
+  else { t.textContent=`Score : ${score} / 12`; s.textContent="Voici le détail des réponses."; }
+  $("#resRows").innerHTML=rows;
+  show("g1res","Résultats");
+}
+
+/* ---------- Jeux 2 et 3 ---------- */
+const TR={mode:2,streak:0,best:0,idx:0,q:null,answered:false,last:"",reader:null};
+function loadBest(m){ try{ return +(localStorage.getItem("cm_best"+m)||0); }catch(e){ return 0; } }
+function saveBest(m,v){ try{ localStorage.setItem("cm_best"+m,v); }catch(e){} }
+function startTr(m){
+  TR.mode=m; TR.streak=0; TR.idx=0; TR.last=""; TR.best=loadBest(m);
+  show("tr", m===2 ? "Heures et minutes" : "Divisions par 4");
+  nextTr();
+}
+function paintStreak(){
+  const c=$("#trStreak");
+  c.hidden = TR.streak<1;
+  c.textContent = "Série : "+TR.streak;
+  c.classList.toggle("hot",TR.streak>=3);
+  $("#trBest").textContent = TR.best>=3 ? "Record : "+TR.best : "";
+}
+function nextTr(){
+  let q;
+  do{
+    if(TR.mode===2) q = TR.idx%2===0 ? minToHm() : hmToMin();
+    else q = halfDetailed();
+  }while(q.text===TR.last);
+  TR.last=q.text; TR.q=q; TR.idx++; TR.answered=false;
+  $("#trq").textContent=q.text;
+  $("#trfb").innerHTML="";
+  $("#trok").hidden=false; $("#trnext").hidden=true;
+  const a=buildAnswer($("#tra"),q,validateTr);
+  TR.reader=a.read; paintStreak(); a.focus();
+}
+function validateTr(){
+  if(TR.answered) return;
+  const q=TR.q, v=TR.reader();
+  if(isEmpty(v)){ const i=$("#tra input"); if(i) i.focus(); return; }
+  TR.answered=true;
+  const ok=check(q,v);
+  document.querySelectorAll("#tra input").forEach(i=>i.disabled=true);
+  let head;
+  if(ok){
+    TR.streak++;
+    if(TR.streak>TR.best){ TR.best=TR.streak; saveBest(TR.mode,TR.best); }
+    if(TR.streak>=3){ head=`${TR.streak} de suite, bravo !`; confetti(TR.streak>=5?60:40); }
+    else if(TR.streak===2){ head="Exact ! 2 de suite"; }
+    else { head=pick(["Exact !","Juste !","Bien joué !"]); }
+  } else {
+    TR.streak=0;
+  }
+  const det=q.detail.join("<br>");
+  $("#trfb").innerHTML = ok
+    ? `<div class="fb good"><div class="big">${head}</div><div class="detail">${det}</div></div>`
+    : `<div class="fb neutral"><div class="big">Réponse : ${q.ansText}</div><div class="detail">${det}</div></div>`;
+  paintStreak();
+  $("#trok").hidden=true; $("#trnext").hidden=false; $("#trnext").focus();
+}
+$("#trok").onclick=validateTr;
+$("#trnext").onclick=nextTr;
+
+show("menu");
+})();
+</script>
+</body>
+</html>
