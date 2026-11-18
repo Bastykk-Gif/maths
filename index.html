@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Multiplications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4ff;
+  --card: #fff;
+  --primary: #4f46e5;
+  --plight: #818cf8;
+  --accent: #f97316;
+  --teal: #06b6d4;
+  --ok: #22c55e;
+  --ko: #ef4444;
+  --text: #1e1b4b;
+  --muted: #6b7280;
+  --r: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Nunito', Arial, sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px 16px 40px;
+  color: var(--text);
+}
+.wrap { width: 100%; max-width: 560px; }
+
+/* HEADER */
+.hd { text-align: center; margin-bottom: 20px; }
+.hd h1 { font-family: 'Baloo 2', cursive; font-size: 2.4rem; color: var(--primary); line-height: 1.1; }
+.hd p  { color: var(--muted); font-size: .95rem; font-weight: 700; margin-top: 4px; }
+
+/* CARD */
+.card {
+  background: var(--card);
+  border-radius: var(--r);
+  box-shadow: 0 6px 28px rgba(79,70,229,.11);
+  padding: 24px 20px;
+  margin-bottom: 16px;
+}
+
+/* SECTION LABEL */
+.lbl {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1rem;
+  color: var(--primary);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* TABLES GRID */
+.tgrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.tbtn {
+  height: 50px;
+  border: 2.5px solid #e0e7ff;
+  border-radius: 11px;
+  background: #f8faff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .15s;
+  user-select: none;
+}
+.tbtn.on {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 3px 10px rgba(79,70,229,.3);
+}
+.row2 { display: flex; gap: 8px; margin-top: 8px; }
+
+/* MODES */
+.mgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.mbtn {
+  border: 2.5px solid #e0e7ff;
+  border-radius: 13px;
+  padding: 12px 6px;
+  background: #f8faff;
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .15s;
+}
+.mbtn.on { background: #fff7ed; border-color: var(--accent); box-shadow: 0 3px 10px rgba(249,115,22,.18); }
+.mico  { font-size: 1.5rem; display: block; margin-bottom: 3px; }
+.mnam  { font-size: .8rem;  font-weight: 800; color: var(--text); }
+.mex   { font-size: .68rem; color: var(--muted); margin-top: 2px; }
+
+/* TIMER CONFIG */
+.tcfg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #eef2ff;
+  border-radius: 13px;
+  padding: 14px 16px;
+  flex-wrap: wrap;
+  transition: opacity .15s;
+}
+.tcfg.off { opacity: .45; }
+.tfields { display: flex; align-items: center; gap: 6px; flex: 1; }
+.tfw { text-align: center; }
+.tfw label { display: block; font-size: .65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; margin-bottom: 3px; }
+.tinput {
+  width: 60px;
+  padding: 7px 4px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.35rem;
+  text-align: center;
+  border: 2.5px solid #c7d2fe;
+  border-radius: 9px;
+  outline: none;
+  color: var(--primary);
+  background: #fff;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.tinput::-webkit-inner-spin-button,
+.tinput::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.tsep { font-family: 'Baloo 2', cursive; font-size: 1.5rem; color: var(--plight); }
+.tprev { font-size: .8rem; color: var(--muted); font-weight: 700; white-space: nowrap; }
+
+/* NO TIMER SWITCH */
+.nochrono {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px 16px;
+  background: #f8faff;
+  border: 2.5px solid #e0e7ff;
+  border-radius: 13px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  font-size: .9rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.nochrono input { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+
+/* BUTTONS */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 13px 20px;
+  border-radius: 50px;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-size: .95rem;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+}
+.btn-go {
+  background: linear-gradient(135deg, var(--primary), var(--plight));
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(79,70,229,.35);
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 15px;
+  margin-top: 20px;
+}
+.btn-go:active { transform: scale(.97); }
+.btn-sm {
+  background: transparent;
+  border: 2px solid #e0e7ff;
+  color: var(--primary);
+  font-size: .82rem;
+  padding: 7px 14px;
+  flex: 1;
+}
+.btn-sm:active { background: #eef2ff; }
+.btn-red {
+  background: #fff1f2;
+  border: 2px solid #fecdd3;
+  color: #e11d48;
+  font-size: .82rem;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-cfg {
+  background: transparent;
+  border: 2px solid #e0e7ff;
+  color: var(--primary);
+  font-size: .82rem;
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-gold {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(245,158,11,.35);
+  flex: 1;
+  font-size: .95rem;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 50px;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-back {
+  background: transparent;
+  border: 2px solid #e0e7ff;
+  color: var(--primary);
+  flex: 1;
+  font-size: .95rem;
+  padding: 13px 16px;
+  border-radius: 50px;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* WARNING */
+.warn {
+  background: #fff7ed; border: 2px solid #fed7aa;
+  border-radius: 11px; padding: 9px 14px;
+  color: var(--accent); font-size: .88rem; font-weight: 700;
+  margin-top: 10px; display: none;
+}
+
+/* GAME */
+#game { display: none; }
+
+/* SCORE BAR */
+.sbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eef2ff;
+  border-radius: 13px;
+  padding: 11px 16px;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+.si { text-align: center; }
+.sn  { font-family: 'Baloo 2', cursive; font-size: 1.65rem; color: var(--primary); line-height: 1; }
+.slb { font-size: .62rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.sdv { width: 1px; height: 34px; background: #c7d2fe; }
+
+/* CLOCK RING */
+.clkwrap { text-align: center; margin-bottom: 10px; }
+.ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 76px; height: 76px;
+}
+.ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+.ring svg circle { fill: none; stroke-width: 5; stroke-linecap: round; }
+.rbg  { stroke: #e0e7ff; }
+.rfil { stroke: var(--primary); transition: stroke-dashoffset 1s linear, stroke .4s; }
+.rfil.warn2  { stroke: var(--accent); }
+.rfil.danger { stroke: var(--ko); }
+.clktxt {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.25rem; font-weight: 800;
+  color: var(--primary);
+  position: relative; z-index: 1;
+  transition: color .4s;
+}
+.clktxt.warn2  { color: var(--accent); }
+.clktxt.danger { color: var(--ko); animation: pulse .5s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+/* PROGRESS */
+.ptrack { height: 7px; background: #e0e7ff; border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
+.pfill  { height: 100%; width: 0; background: linear-gradient(90deg, var(--primary), var(--teal)); border-radius: 99px; transition: width .4s; }
+
+/* QUESTION */
+.qwrap { text-align: center; padding: 18px 8px 14px; }
+.qtxt  { font-family: 'Baloo 2', cursive; font-size: 3rem; color: var(--text); line-height: 1.15; }
+.qtxt .blank { display: inline-block; min-width: 52px; border-bottom: 4px solid var(--accent); color: var(--accent); padding: 0 6px; }
+.irow { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 16px; }
+#ans {
+  width: 120px;
+  padding: 11px 10px;
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.75rem;
+  text-align: center;
+  border: 3px solid #e0e7ff;
+  border-radius: 13px;
+  outline: none;
+  color: var(--text);
+  background: #f8faff;
+  transition: border-color .18s;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+#ans::-webkit-inner-spin-button,
+#ans::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+#ans:focus   { border-color: var(--primary); background: #fff; }
+#ans.ok      { border-color: var(--ok);  background: #f0fdf4; }
+#ans.ko      { border-color: var(--ko);  background: #fff1f2; }
+#vbtn {
+  background: linear-gradient(135deg, var(--teal), #0891b2);
+  color: #fff; border: none; border-radius: 13px;
+  padding: 12px 18px; font-size: 1.4rem;
+  cursor: pointer; transition: all .15s;
+  box-shadow: 0 3px 10px rgba(6,182,212,.3);
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1;
+}
+#vbtn:active { transform: scale(.95); }
+
+/* FEEDBACK */
+.fb {
+  min-height: 44px; text-align: center;
+  font-size: 1rem; font-weight: 800;
+  border-radius: 11px; padding: 9px 12px; margin-top: 12px;
+}
+.fb.ok { background: #f0fdf4; color: var(--ok); animation: pop .3s ease; }
+.fb.ko { background: #fff1f2; color: var(--ko); }
+.fb.mt { background: transparent; color: transparent; }
+@keyframes pop { 0%{transform:scale(.88)} 65%{transform:scale(1.06)} 100%{transform:scale(1)} }
+
+/* GAME FOOTER */
+.gfoot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
+
+/* END */
+#end { display: none; text-align: center; }
+.ebig {
+  font-family: 'Baloo 2', cursive;
+  font-size: 5rem; color: var(--ok); line-height: 1;
+  filter: drop-shadow(0 3px 14px rgba(34,197,94,.3));
+  animation: bounce .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes bounce { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+.elbl  { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin-top: 4px; }
+.estars{ font-size: 1.9rem; margin: 10px 0 8px; letter-spacing: 3px; }
+.rbadge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 22px; border-radius: 50px;
+  font-weight: 900; font-size: 1.05rem;
+  margin: 6px 0 3px;
+  animation: bounce .45s cubic-bezier(.34,1.56,.64,1);
+}
+.rbadge.gold { background: #fef3c7; border: 2.5px solid #f59e0b; color: #78350f; box-shadow: 0 3px 16px rgba(245,158,11,.3); }
+.rbadge.blue { background: #f0f9ff; border: 2px solid #bae6fd; color: #0369a1; }
+.eprev { font-size: .78rem; color: var(--muted); margin: 2px 0 8px; }
+.emsg  { font-size: .95rem; color: var(--muted); margin: 5px 0 0; }
+.estats{ display: flex; gap: 10px; justify-content: center; margin: 14px 0 20px; flex-wrap: wrap; }
+.estat { background: #f8faff; border: 2px solid #e0e7ff; border-radius: 13px; padding: 9px 14px; min-width: 85px; }
+.estn  { font-family: 'Baloo 2', cursive; font-size: 1.25rem; color: var(--muted); }
+.estl  { font-size: .68rem; color: var(--muted); font-weight: 700; }
+.efoot { display: flex; gap: 10px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hd">
+    <h1>Tables Quiz</h1>
+    <p>Revise tes multiplications !</p>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="card" id="cfg">
+    <div class="lbl">Tables à réviser</div>
+    <div class="tgrid" id="tgrid"></div>
+    <div class="row2">
+      <button class="btn btn-sm" onclick="selAll()">Tout sélectionner</button>
+      <button class="btn btn-sm" onclick="selNone()">Tout désélectionner</button>
+    </div>
+
+    <div class="lbl" style="margin-top:20px;">Mode de jeu</div>
+    <div class="mgrid">
+      <div class="mbtn on" data-m="1" onclick="setMode(1)">
+        <span class="mico">🔢</span>
+        <div class="mnam">Classique</div>
+        <div class="mex">3 x 3 = ?</div>
+      </div>
+      <div class="mbtn" data-m="2" onclick="setMode(2)">
+        <span class="mico">❓</span>
+        <div class="mnam">A trou</div>
+        <div class="mex">3 x ? = 9</div>
+      </div>
+      <div class="mbtn" data-m="3" onclick="setMode(3)">
+        <span class="mico">🎲</span>
+        <div class="mnam">Mixte</div>
+        <div class="mex">aléatoire</div>
+      </div>
+    </div>
+
+    <div class="lbl" style="margin-top:20px;">Durée de la session</div>
+    <div class="tcfg" id="tcfg">
+      <span style="font-size:1.7rem;">⏳</span>
+      <div class="tfields">
+        <div class="tfw">
+          <label for="cmin">min</label>
+          <input class="tinput" id="cmin" type="number" min="0" max="59" value="1"
+                 inputmode="numeric" pattern="[0-9]*" oninput="updTimer()">
+        </div>
+        <span class="tsep">:</span>
+        <div class="tfw">
+          <label for="csec">sec</label>
+          <input class="tinput" id="csec" type="number" min="0" max="59" value="30"
+                 inputmode="numeric" pattern="[0-9]*" oninput="updTimer()">
+        </div>
+      </div>
+      <div class="tprev" id="tprev">1 min 30 s</div>
+    </div>
+    <label class="nochrono" for="notimer">
+      <input type="checkbox" id="notimer" onchange="updTimer()">
+      <span>Sans chronomètre (je m'arrête quand je veux)</span>
+    </label>
+
+    <div class="warn" id="wrn">Sélectionne au moins une table !</div>
+    <button class="btn btn-go" onclick="startGame(false)">Commencer le quiz</button>
+  </div>
+
+  <!-- GAME -->
+  <div class="card" id="game">
+    <div class="sbar">
+      <div class="si"><div class="sn" id="sc">0</div><div class="slb">Corrects</div></div>
+      <div class="sdv"></div>
+      <div class="si"><div class="sn" id="st">0</div><div class="slb">Posées</div></div>
+      <div class="sdv"></div>
+      <div class="si"><div class="sn" id="ss">0</div><div class="slb">Serie</div></div>
+    </div>
+
+    <div class="clkwrap" id="clkwrap">
+      <div class="ring">
+        <svg width="76" height="76" viewBox="0 0 76 76">
+          <circle class="rbg"  cx="38" cy="38" r="33"/>
+          <circle class="rfil" id="rfil" cx="38" cy="38" r="33"
+                  stroke-dasharray="207.3" stroke-dashoffset="0"/>
+        </svg>
+        <span class="clktxt" id="clktxt">1:30</span>
+      </div>
+    </div>
+
+    <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+
+    <div class="qwrap">
+      <div class="qtxt" id="qtxt">&mdash;</div>
+      <div class="irow">
+        <input type="number" id="ans" placeholder="?"
+               autocomplete="off" inputmode="numeric" pattern="[0-9]*">
+        <button id="vbtn" onclick="checkAns()">&#8594;</button>
+      </div>
+      <div class="fb mt" id="fb">&nbsp;</div>
+    </div>
+
+    <div class="gfoot">
+      <button class="btn-red" onclick="endGame()">Terminer</button>
+      <button class="btn-cfg" onclick="goConfig()">Config</button>
+    </div>
+  </div>
+
+  <!-- END -->
+  <div class="card" id="end">
+    <div class="ebig" id="ebig">0</div>
+    <div class="elbl" id="elbl">bonne(s) réponse(s) !</div>
+    <div class="estars" id="estars">&#11088;</div>
+    <div id="rbwrap"></div>
+    <p class="eprev" id="eprev"></p>
+    <p class="emsg"  id="emsg"></p>
+    <div class="estats">
+      <div class="estat"><div class="estn" id="etries">0</div><div class="estl">Essais total</div></div>
+      <div class="estat"><div class="estn" id="eerrs">0</div><div class="estl">Erreurs</div></div>
+      <div class="estat"><div class="estn" id="etime">0s</div><div class="estl">Moy / réponse</div></div>
+    </div>
+    <div class="efoot">
+      <button class="btn-gold" onclick="replayGame()">Rejouer (mêmes réglages)</button>
+      <button class="btn-back" onclick="goConfig()">Changer les réglages</button>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// === STATE ===
+var sel   = [1,2,3,4,5,6,7,8,9,10];
+var mode  = 1;
+var ok=0, tot=0, tries=0, streak=0, totTime=0, qStart=0;
+var curQ  = null;
+var tDur  = 90, tLeft = 90, tInt = null;
+var noTimer = false;
+var CIRC  = 2 * 3.14159265 * 33; // r=33 => ~207.3
+var sesRec=null, prevRec=null, isReplay=false;
+
+// Tirage sans répétition
+// Les calculs avec un 1 ou un 10 (trop faciles) sont dans un paquet à part,
+// tiré très rarement (EASY_PROB par question).
+var EASY_PROB = 0.03;
+var allN = [], allE = [];     // paquets complets (normaux / faciles)
+var leftN = [], leftE = [];   // ce qu'il reste à tirer dans chaque paquet
+var lastKey = '';
+
+// === INIT ===
+window.onload = function() {
+  buildGrid();
+  updTimer();
+  document.getElementById('ans').addEventListener('keydown', function(e) {
+    if (e.keyCode === 13) { checkAns(); }
+  });
+};
+
+function buildGrid() {
+  var g = document.getElementById('tgrid');
+  g.innerHTML = '';
+  for (var i = 1; i <= 10; i++) {
+    var b = document.createElement('div');
+    b.className = 'tbtn on';
+    b.textContent = String(i);
+    b.setAttribute('data-n', i);
+    (function(n, el) {
+      el.onclick = function() { toggleT(n, el); };
+    })(i, b);
+    g.appendChild(b);
+  }
+}
+
+function toggleT(n, el) {
+  var idx = sel.indexOf(n);
+  if (idx >= 0) { sel.splice(idx, 1); el.classList.remove('on'); }
+  else { sel.push(n); sel.sort(function(a,b){return a-b;}); el.classList.add('on'); }
+}
+
+function selAll() {
+  sel = [1,2,3,4,5,6,7,8,9,10];
+  var bs = document.querySelectorAll('.tbtn');
+  for (var i=0;i<bs.length;i++) bs[i].classList.add('on');
+}
+function selNone() {
+  sel = [];
+  var bs = document.querySelectorAll('.tbtn');
+  for (var i=0;i<bs.length;i++) bs[i].classList.remove('on');
+}
+function setMode(m) {
+  mode = m;
+  var bs = document.querySelectorAll('.mbtn');
+  for (var i=0;i<bs.length;i++) {
+    bs[i].classList.toggle('on', parseInt(bs[i].getAttribute('data-m')) === m);
+  }
+}
+function updTimer() {
+  noTimer = document.getElementById('notimer').checked;
+  var cm = document.getElementById('cmin');
+  var cs = document.getElementById('csec');
+  cm.disabled = noTimer;
+  cs.disabled = noTimer;
+  document.getElementById('tcfg').classList.toggle('off', noTimer);
+  if (noTimer) {
+    document.getElementById('tprev').textContent = 'Sans limite';
+    return;
+  }
+  var m = parseInt(cm.value) || 0;
+  var s = parseInt(cs.value) || 0;
+  tDur = m*60 + s;
+  var t = '';
+  if (m > 0) t += m + ' min ';
+  if (s > 0 || m === 0) t += s + ' s';
+  document.getElementById('tprev').textContent = t || '0 s';
+}
+
+// === FLOW ===
+function show(id) { document.getElementById(id).style.display = 'block'; }
+function hide(id) { document.getElementById(id).style.display = 'none';  }
+
+function startGame(replay) {
+  if (sel.length === 0) {
+    var w = document.getElementById('wrn');
+    w.style.display = 'block';
+    setTimeout(function(){ w.style.display = 'none'; }, 2500);
+    return;
+  }
+  isReplay = replay;
+  if (!replay) { sesRec = null; prevRec = null; }
+  noTimer = document.getElementById('notimer').checked;
+  var m = parseInt(document.getElementById('cmin').value) || 0;
+  var s = parseInt(document.getElementById('csec').value) || 0;
+  tDur = Math.max(1, m*60 + s);
+  ok=0; tot=0; tries=0; streak=0; totTime=0;
+  buildPools();
+  hide('cfg'); hide('end'); show('game');
+  updScore();
+  if (noTimer) {
+    stopClock();
+    document.getElementById('clkwrap').style.display = 'none';
+  } else {
+    document.getElementById('clkwrap').style.display = 'block';
+    startClock();
+  }
+  nextQ();
+}
+function replayGame() { prevRec = sesRec; startGame(true); }
+function goConfig() {
+  stopClock(); hide('game'); hide('end'); show('cfg');
+  sesRec=null; prevRec=null; isReplay=false;
+}
+function endGame() { stopClock(); hide('game'); showEnd(); }
+
+// === CLOCK ===
+function startClock() {
+  tLeft = tDur;
+  renderClock();
+  clearInterval(tInt);
+  tInt = setInterval(function() {
+    tLeft--;
+    renderClock();
+    if (tLeft <= 0) { stopClock(); hide('game'); showEnd(); }
+  }, 1000);
+}
+function stopClock() { clearInterval(tInt); tInt = null; }
+function renderClock() {
+  var t = tLeft < 0 ? 0 : tLeft;
+  var m = Math.floor(t/60), s = t%60;
+  var disp = m + ':' + (s < 10 ? '0' : '') + s;
+  var tx = document.getElementById('clktxt');
+  var rf = document.getElementById('rfil');
+  tx.textContent = disp;
+  var ratio = tDur > 0 ? t/tDur : 0;
+  rf.style.strokeDashoffset = CIRC * (1 - ratio);
+  var w = t <= tDur*0.33 && t > tDur*0.15;
+  var d = t <= tDur*0.15;
+  tx.className = 'clktxt' + (d?' danger': w?' warn2':'');
+  rf.className = 'rfil'   + (d?' danger': w?' warn2':'');
+}
+
+// === QUESTION ===
+function isEasy(a, b) { return a === 1 || b === 1 || a === 10 || b === 10; }
+
+function buildPools() {
+  allN = []; allE = [];
+  for (var i = 0; i < sel.length; i++) {
+    for (var o = 1; o <= 10; o++) {
+      var it = {a: sel[i], b: o};
+      if (isEasy(it.a, it.b)) allE.push(it); else allN.push(it);
+    }
+  }
+  leftN = []; leftE = [];
+  lastKey = '';
+}
+
+// Tire un calcul dans un paquet sans le remettre tant que le paquet n'est pas vide.
+// Quand il est vide, on le remplit à nouveau (nouveau tour).
+function draw(kind) {
+  var all  = kind === 'E' ? allE : allN;
+  var left = kind === 'E' ? leftE : leftN;
+  if (left.length === 0) {
+    left = all.slice();
+    if (kind === 'E') leftE = left; else leftN = left;
+  }
+  var idx = Math.floor(Math.random() * left.length);
+  // en début de nouveau tour, évite de reposer le même calcul que juste avant
+  if (left.length > 1 && left[idx].a + 'x' + left[idx].b === lastKey) {
+    idx = (idx + 1) % left.length;
+  }
+  return left.splice(idx, 1)[0];
+}
+
+function genQ() {
+  var sing = sel.length === 1;
+  var useEasy;
+  if (allN.length === 0)      useEasy = true;   // ex : seulement les tables 1 et/ou 10
+  else if (allE.length === 0) useEasy = false;
+  else                        useEasy = Math.random() < EASY_PROB;
+  var it  = draw(useEasy ? 'E' : 'N');
+  lastKey = it.a + 'x' + it.b;
+  var a=it.a, b=it.b, ans=a*b;
+  var em = mode;
+  if (mode === 3) em = Math.random()<.5 ? 1 : 2;
+  var bl;
+  if (em === 1) { bl = 'r'; }
+  else { bl = sing ? 'b' : (Math.random()<.5 ? 'a' : 'b'); }
+  return {a:a, b:b, ans:ans, bl:bl};
+}
+function qHTML(q) {
+  var as = q.bl==='a' ? '<span class="blank">?</span>' : '<strong>'+q.a+'</strong>';
+  var bs = q.bl==='b' ? '<span class="blank">?</span>' : '<strong>'+q.b+'</strong>';
+  var rs = q.bl==='r' ? '<span class="blank">?</span>' : '<strong>'+q.ans+'</strong>';
+  return as + ' <span style="color:#818cf8">&#215;</span> ' + bs + ' <span style="color:#9ca3af">=</span> ' + rs;
+}
+function getAns(q) {
+  if (q.bl==='r') return q.ans;
+  if (q.bl==='a') return q.a;
+  return q.b;
+}
+
+function nextQ() {
+  curQ = genQ();
+  var inp = document.getElementById('ans');
+  inp.value = ''; inp.className = ''; inp.disabled = false;
+  inp.focus();
+  setFB('&nbsp;', 'mt');
+  document.getElementById('qtxt').innerHTML = qHTML(curQ);
+  qStart = Date.now();
+}
+
+function checkAns() {
+  var inp = document.getElementById('ans');
+  var val = inp.value.trim();
+  if (val === '') return;
+  var ua = parseInt(val, 10);
+  var ca = getAns(curQ);
+  var el = Date.now() - qStart;
+  tries++;
+  if (ua === ca) {
+    ok++; tot++; totTime += el; streak++;
+    inp.className = 'ok'; inp.disabled = true;
+    var msgs = ['Bravo !','Super !','Excellent !','Parfait !','Génial !','Bien joué !'];
+    setFB(msgs[Math.floor(Math.random()*msgs.length)], 'ok');
+    updScore();
+    setTimeout(function(){ inp.className=''; nextQ(); }, 800);
+  } else {
+    streak = 0;
+    inp.className = 'ko'; inp.value = ''; inp.focus();
+    setFB('Mauvaise réponse - réessaie !', 'ko');
+    updScore();
+  }
+}
+
+function setFB(msg, cls) {
+  var fb = document.getElementById('fb');
+  fb.className = 'fb ' + cls;
+  fb.innerHTML = msg;
+}
+function updScore() {
+  document.getElementById('sc').textContent = ok;
+  document.getElementById('st').textContent = tot;
+  document.getElementById('ss').textContent = streak;
+  var pct = tot > 0 ? Math.round(ok/tot*100) : 0;
+  document.getElementById('pfill').style.width = pct + '%';
+}
+
+// === END ===
+function showEnd() {
+  show('end');
+  document.getElementById('ebig').textContent = ok;
+  document.getElementById('elbl').textContent = ok <= 1 ? 'bonne réponse !' : 'bonnes réponses !';
+  var pct = tot > 0 ? ok/tot : 0;
+  var stars = pct >= .9 ? '★★★' : pct >= .7 ? '★★' : '★';
+  document.getElementById('estars').textContent = stars;
+
+  var bw = document.getElementById('rbwrap');
+  var pi = document.getElementById('eprev');
+  bw.innerHTML = ''; pi.textContent = '';
+
+  if (isReplay && prevRec !== null) {
+    var bd = document.createElement('div');
+    var pr = prevRec;
+    var prl = pr + (pr > 1 ? ' bonnes réponses' : ' bonne réponse');
+    if (ok > pr) {
+      bd.className = 'rbadge gold';
+      bd.textContent = 'Record battu !';
+      pi.textContent = 'Précédent record : ' + prl;
+    } else if (ok === pr) {
+      bd.className = 'rbadge blue';
+      bd.textContent = 'Score égal - Bien joue !';
+      pi.textContent = 'Record actuel : ' + prl;
+    } else {
+      bd.className = 'rbadge blue';
+      bd.textContent = 'Bien joue !';
+      pi.textContent = 'Record actuel : ' + prl;
+    }
+    bw.appendChild(bd);
+  }
+
+  if (sesRec === null || ok > sesRec) sesRec = ok;
+
+  var msg = 'Continue à pratiquer, tu vas y arriver !';
+  if (pct >= .95)     msg = 'Parfait ! Les tables n\'ont plus de secrets pour toi !';
+  else if (pct >= .9) msg = 'Excellent travail, tu maitrises bien !';
+  else if (pct >= .7) msg = 'Bien joue, encore quelques efforts !';
+  document.getElementById('emsg').textContent = msg;
+
+  document.getElementById('etries').textContent = tries;
+  document.getElementById('eerrs').textContent  = tries - ok;
+  var avg = ok > 0 ? Math.round(totTime/ok/100)/10 : 0;
+  document.getElementById('etime').textContent  = avg.toFixed(1) + 's';
+}
+</script>
+</body>
+</html>
