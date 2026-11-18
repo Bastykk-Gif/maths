@@ -94,11 +94,11 @@ ul.rows{list-style:none; margin:0; padding:0; display:grid; gap:10px}
   <!-- MENU -->
   <section id="menu">
     <h1>Calcul mental</h1>
-    <p class="sub">Choisis ton jeu.</p>
+    <p class="sub">Choisis ton jeu</p>
     <div class="modes">
-      <button class="mode" data-start="1"><div class="num">1</div><div><b>Évaluation</b><span class="d">12 questions, 13 secondes chacune. Résultat à la fin.</span></div></button>
-      <button class="mode" data-start="2"><div class="num">2</div><div><b>Heures et minutes</b><span class="d">Convertir sans minuteur, avec correction détaillée.</span></div></button>
-      <button class="mode" data-start="3"><div class="num">3</div><div><b>Divisions par 4</b><span class="d">Les résultats en ,5 (comme 38 ÷ 4), avec correction détaillée.</span></div></button>
+      <button class="mode" data-start="1"><div class="num">1</div><div><b>Évaluation</b><span class="d">12 questions, 13 secondes chacune, résultat à la fin</span></div></button>
+      <button class="mode" data-start="2"><div class="num">2</div><div><b>Heures et minutes</b><span class="d">Convertir sans minuteur, avec correction détaillée</span></div></button>
+      <button class="mode" data-start="3"><div class="num">3</div><div><b>Divisions par 4</b><span class="d">Les résultats en ,5 (comme 38 ÷ 4), avec correction détaillée</span></div></button>
     </div>
   </section>
 
@@ -200,9 +200,9 @@ function minToHm(){
   const h=Math.floor(t/60), m=t%60;
   const q=mk(`${t} min = ___ h ___ min`,"hm",{h,m},`${h} h ${m} min`,"");
   q.detail=[
-    `Une heure = 60 min.`,
-    `${h} × 60 = ${h*60}, et ${t} − ${h*60} = ${m}.`,
-    `Donc ${t} min = ${h} h ${m} min.`
+    `Une heure = 60 min`,
+    `${h} × 60 = ${h*60}, et ${t} − ${h*60} = ${m}`,
+    `Donc ${t} min = ${h} h ${m} min`
   ];
   return q;
 }
@@ -210,9 +210,9 @@ function hmToMin(){
   const h=rnd(1,5), m=pick([5,10,15,20,25,30,35,40,45,50,55]), r=h*60+m;
   const q=num(`${h} h ${m<10?"0"+m:m} = ___ min`, r, "", `${r} min`, "min");
   q.detail=[
-    `${h} h = ${h} × 60 = ${h*60} min.`,
-    `On ajoute les ${m} min : ${h*60} + ${m} = ${r}.`,
-    `Donc ${h} h ${m} = ${r} min.`
+    `${h} h = ${h} × 60 = ${h*60} min`,
+    `On ajoute les ${m} min : ${h*60} + ${m} = ${r}`,
+    `Donc ${h} h ${m} = ${r} min`
   ];
   return q;
 }
@@ -220,10 +220,10 @@ function halfDetailed(){
   const k=rnd(2,9), n=4*k+2;
   const q=num(`${n} ÷ 4 =`, k+0.5, "", `${k},5`);
   q.detail=[
-    `4 × ${k} = ${4*k}, il reste ${n} − ${4*k} = 2.`,
-    `2 ÷ 4 = 0,5 (2 sur 4, c'est la moitié).`,
-    `Donc ${n} ÷ 4 = ${k},5.`,
-    `Astuce : la moitié de ${n} est ${n/2}, et la moitié de ${n/2} est ${k},5.`
+    `4 × ${k} = ${4*k}, il reste ${n} − ${4*k} = 2`,
+    `2 ÷ 4 = 0,5 (2 sur 4, c'est la moitié)`,
+    `Donc ${n} ÷ 4 = ${k},5`,
+    `Astuce : la moitié de ${n} est ${n/2}, et la moitié de ${n/2} est ${k},5`
   ];
   return q;
 }
@@ -356,9 +356,9 @@ function endG1(){
   }).join("");
   const t=$("#resTitle"), s=$("#resSub");
   t.className="res-title";
-  if(score===12){ t.textContent="Sans faute : 12 / 12 !"; s.textContent="Magnifique, rien à redire."; t.classList.add("star"); confetti(70); }
-  else if(score===11){ t.textContent="Superbe : 11 / 12 !"; s.textContent="Un résultat remarquable."; t.classList.add("star"); confetti(55); }
-  else { t.textContent=`Score : ${score} / 12`; s.textContent="Voici le détail des réponses."; }
+  if(score===12){ t.textContent="Sans faute : 12 / 12 !"; s.textContent="Magnifique, rien à redire"; t.classList.add("star"); confetti(70); }
+  else if(score===11){ t.textContent="Superbe : 11 / 12 !"; s.textContent="Un résultat remarquable"; t.classList.add("star"); confetti(55); }
+  else { t.textContent=`Score : ${score} / 12`; s.textContent="Voici le détail des réponses"; }
   $("#resRows").innerHTML=rows;
   show("g1res","Résultats");
 }
